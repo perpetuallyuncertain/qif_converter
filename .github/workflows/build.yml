@@ -29,7 +29,7 @@ jobs:
       - name: Build binary for Intel (x86_64)
         run: |
           mkdir -p release
-          arch -x86_64 pyinstaller --onefile --name csv_to_qif --hidden-import=streamlit main.py
+          arch -x86_64 pyinstaller --onefile --name csv_to_qif wrapper.py
           tar -czvf release/csv_to_qif-macOS.tar.gz -C dist csv_to_qif
 
       - name: Upload artifact
