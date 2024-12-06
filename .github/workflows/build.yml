@@ -44,13 +44,13 @@ jobs:
           arch -x86_64 pyinstaller wrapper.spec
 
           # Package the binary into a tar.gz file
-          tar -czvf release/csv_to_qif-macOS.tar.gz -C dist wrapper
+          tar -czvf release/mumma_converter-macOS.tar.gz -C dist mumma_converter    
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: csv_to_qif-macOS
-          path: release/csv_to_qif-macOS.tar.gz
+          name: mumma_converter-macOS
+          path: release/mumma_converter-macOS.tar.gz
 
   release:
     needs: build
@@ -62,7 +62,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: csv_to_qif-macOS
+          name: mumma_converter-macOS
 
       - name: Create Release
         uses: actions/create-release@v1
@@ -79,4 +79,4 @@ jobs:
         with:
           repo_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           tag: ${{ github.ref_name }}
-          file: csv_to_qif-macOS.tar.gz
+          file: mumma_converter-macOS.tar.gz
