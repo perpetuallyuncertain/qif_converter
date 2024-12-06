@@ -20,16 +20,22 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.10
 
       - name: Install dependencies (x86_64)
         run: |
           arch -x86_64 python3 -m pip install --no-cache-dir -r requirements.txt
 
+      - name: Set up Virtual Environment
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install --no-cache-dir -r requirements.txt      
+
       - name: Build binary for Intel (x86_64)
         run: |
           mkdir -p release
-          arch -x86_64 pyinstaller --onefile --name csv_to_qif wrapper.py
+          arch -x86_64 pyinstaller --onefile --name csv_to_qif --hidden-import=streamlit --hidden-import=pandas --hidden-import=altair --hidden-import=blinker --hidden-import=watchdog --hidden-import=jinja2 --hidden-import=pyarrow --hidden-import=protobuf --hidden-import=click --hidden-import=rich wrapper.py
           tar -czvf release/csv_to_qif-macOS.tar.gz -C dist csv_to_qif
 
       - name: Upload artifact
