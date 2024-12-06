@@ -23,12 +23,13 @@ jobs:
           python-version: 3.9
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          arch -x86_64 python3 -m pip install --no-cache-dir -r requirements.txt
 
       - name: Build binary
         run: |
           mkdir -p release
-          pyinstaller --onefile --name csv_to_qif --target-arch=x86_64 main.py
+          pyinstaller --onefile --name csv_to_qif main.py
           tar -czvf release/csv_to_qif-macOS.tar.gz -C dist csv_to_qif
 
       - name: Upload artifact
