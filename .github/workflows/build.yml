@@ -50,21 +50,21 @@ jobs:
 
       - name: Debug Spec File
         run: |
-          ls -l converter.spec || echo "converter.spec not found"
+          ls -l mumma_converter.spec || echo "mumma_converter.spec not found"
 
       - name: Modify Spec File (If Exists)
         run: |
-          if [ -f converter.spec ]; then
-            sed -i '' 's|binaries=\[\]|binaries=\[\("/Library/Frameworks/Python.framework/Versions/3.9", "python.framework/Versions/3.9"\)\]|' converter.spec
+          if [ -f mumma_converter.spec ]; then
+            sed -i '' 's|binaries=\[\]|binaries=\[\("/Library/Frameworks/Python.framework/Versions/3.9", "python.framework/Versions/3.9"\)\]|' mumma_converter.spec
           else
-            echo "No converter.spec file found, skipping modification."
+            echo "No mumma_converter.spec file found, skipping modification."
           fi
 
       - name: Build Binary Using PyInstaller
         run: |
           source venv/bin/activate
           mkdir -p release
-          arch -x86_64 pyinstaller converter.spec
+          arch -x86_64 pyinstaller mumma_converter.spec
 
       - name: Debug dist Directory
         run: |
