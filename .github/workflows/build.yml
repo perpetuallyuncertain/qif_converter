@@ -28,10 +28,10 @@ jobs:
           source venv/bin/activate
           arch -x86_64 pip install --no-cache-dir --force-reinstall -r requirements.txt
 
-      - name: Install PyInstaller
+      - name: Install PyInstaller and Streamlit
         run: |
           source venv/bin/activate
-          arch -x86_64 pip install pyinstaller
+          arch -x86_64 pip install pyinstaller streamlit
 
       - name: Debug Installed Dependencies
         run: |
@@ -43,6 +43,10 @@ jobs:
           source venv/bin/activate
           arch -x86_64 pyinstaller --name=converter --onefile --specpath . wrapper.py
 
+      - name: Modify Spec File to Include Streamlit and Python Framework
+        run: |
+          sed -i '' 's|binaries=\[\]|binaries=\[\("/Library/Frameworks/Python.framework/Versions/3.9", "python.framework/Versions/3.9"\)\]|' wrapper.spec
+
       - name: Build Binary Using PyInstaller
         run: |
           source venv/bin/activate
@@ -53,6 +57,8 @@ jobs:
         run: |
           echo "Contents of dist directory:"
           ls -l dist
+          echo "Contents of python.framework:"
+          ls -l dist/mumma_converter/python.framework || echo "python.framework not found"
 
       - name: Package the Binary
         run: |
