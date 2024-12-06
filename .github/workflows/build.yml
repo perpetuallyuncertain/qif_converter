@@ -21,19 +21,19 @@ jobs:
         run: |
           arch -x86_64 /usr/bin/python3 --version
 
-      - name: Set up Virtual Environment
+      - name: Recreate Virtual Environment (x86_64)
         run: |
+          rm -rf venv  # Clean any existing virtual environment
           arch -x86_64 /usr/bin/python3 -m venv venv
           source venv/bin/activate
-          pip install --no-cache-dir -r requirements.txt
+          arch -x86_64 pip install --no-cache-dir --force-reinstall -r requirements.txt
 
-      - name: Reinstall numpy cleanly
+      - name: Install PyInstaller
         run: |
           source venv/bin/activate
-          pip uninstall -y numpy
-          pip install numpy
+          arch -x86_64 pip install pyinstaller
 
-      - name: Debug installed dependencies
+      - name: Debug Installed Dependencies
         run: |
           source venv/bin/activate
           pip freeze
@@ -43,30 +43,27 @@ jobs:
           source venv/bin/activate
           arch -x86_64 pyinstaller --name=converter --onefile --specpath . wrapper.py
 
-      - name: Build binary using PyInstaller
+      - name: Build Binary Using PyInstaller
         run: |
           source venv/bin/activate
           mkdir -p release
-
-          # Debugging the environment
-          echo "Contents of venv/bin:"
-          ls -l venv/bin
-
-          # Run PyInstaller with the regenerated wrapper.spec
           arch -x86_64 pyinstaller wrapper.spec
 
-          # Debug the dist directory
+      - name: Debug dist Directory
+        run: |
           echo "Contents of dist directory:"
           ls -l dist
 
-          # Package the binary into a tar.gz file
-          tar -czvf release/mumma_converter-macOS.tar.gz -C dist mumma_converter    
+      - name: Package the Binary
+        run: |
+          tar -czvf release/mumma_converter-macOS.tar.gz -C dist mumma_converter
 
-      - name: Upload artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: mumma_converter-macOS
           path: release/mumma_converter-macOS.tar.gz
+
 
   release:
     needs: build
