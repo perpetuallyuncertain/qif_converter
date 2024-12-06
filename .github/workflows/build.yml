@@ -38,7 +38,7 @@ jobs:
           source venv/bin/activate
           pip freeze
 
-      - name: Regenerate wrapper.spec
+      - name: Regenerate converter.spec
         run: |
           source venv/bin/activate
           arch -x86_64 pyinstaller --name=converter --onefile --specpath . wrapper.py
@@ -51,7 +51,7 @@ jobs:
         run: |
           source venv/bin/activate
           mkdir -p release
-          arch -x86_64 pyinstaller wrapper.spec
+          arch -x86_64 pyinstaller converter.spec
 
       - name: Debug dist Directory
         run: |
