@@ -3,7 +3,7 @@ name: Build macOS Binary
 on:
   push:
     tags:
-      - 'v*'  # Trigger on version tags
+      - 'v*'
   workflow_dispatch:  # Allow manual trigger
 
 permissions:
@@ -17,14 +17,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Use Preinstalled Python
+      - name: Install Python from Python.org
         run: |
-          arch -x86_64 /usr/bin/python3 --version
+          curl -o python.pkg https://www.python.org/ftp/python/3.9.6/python-3.9.6-macos11.pkg
+          sudo installer -pkg python.pkg -target /
+
+      - name: Debug Python Framework
+        run: |
+          ls -l /Library/Frameworks/Python.framework/Versions/3.9 || echo "Python framework not found"
 
       - name: Recreate Virtual Environment (x86_64)
         run: |
           rm -rf venv  # Clean any existing virtual environment
-          arch -x86_64 /usr/bin/python3 -m venv venv
+          arch -x86_64 /Library/Frameworks/Python.framework/Versions/3.9/bin/python3 -m venv venv
           source venv/bin/activate
           arch -x86_64 pip install --no-cache-dir --force-reinstall -r requirements.txt
 
@@ -38,14 +43,22 @@ jobs:
           source venv/bin/activate
           pip freeze
 
-      - name: Regenerate converter.spec
+      - name: Regenerate Spec File
         run: |
           source venv/bin/activate
           arch -x86_64 pyinstaller --name=converter --onefile --specpath . wrapper.py
 
-      - name: Modify Spec File to Include Streamlit and Python Framework
+      - name: Debug Spec File
         run: |
-          sed -i '' 's|binaries=\[\]|binaries=\[\("/Library/Frameworks/Python.framework/Versions/3.9", "python.framework/Versions/3.9"\)\]|' converter.spec
+          ls -l converter.spec || echo "converter.spec not found"
+
+      - name: Modify Spec File (If Exists)
+        run: |
+          if [ -f converter.spec ]; then
+            sed -i '' 's|binaries=\[\]|binaries=\[\("/Library/Frameworks/Python.framework/Versions/3.9", "python.framework/Versions/3.9"\)\]|' converter.spec
+          else
+            echo "No converter.spec file found, skipping modification."
+          fi
 
       - name: Build Binary Using PyInstaller
         run: |
