@@ -45,7 +45,7 @@ jobs:
 
       - name: Modify Spec File to Include Streamlit and Python Framework
         run: |
-          sed -i '' 's|binaries=\[\]|binaries=\[\("/Library/Frameworks/Python.framework/Versions/3.9", "python.framework/Versions/3.9"\)\]|' wrapper.spec
+          sed -i '' 's|binaries=\[\]|binaries=\[\("/Library/Frameworks/Python.framework/Versions/3.9", "python.framework/Versions/3.9"\)\]|' converter.spec
 
       - name: Build Binary Using PyInstaller
         run: |
