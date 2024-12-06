@@ -16,11 +16,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
+      
+      - name: Install Python via Homebrew
+        run: |
+          brew install python@3.9
 
       - name: Install dependencies (x86_64)
         run: |
@@ -28,9 +27,10 @@ jobs:
 
       - name: Set up Virtual Environment
         run: |
-          python3 -m venv venv
-          source venv/bin/activate
-          pip install --no-cache-dir -r requirements.txt
+            /usr/local/bin/python3.9 -m venv venv
+            source venv/bin/activate
+            pip install --no-cache-dir -r requirements.txt
+        
 
       - name: Build binary using wrapper.spec
         run: |
