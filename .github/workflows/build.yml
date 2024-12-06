@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: macos-14  # Use a specific macOS version supported by GitHub Actions
+    runs-on: macos-14
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,15 +30,14 @@ jobs:
       - name: Install PyInstaller
         run: |
           source venv/bin/activate
-          pip install pyinstaller
+          pip install pyinstaller numpy
 
-      - name: Debug PATH
+      - name: Generate wrapper.spec
         run: |
-          echo "Current PATH: $PATH"
           source venv/bin/activate
-          which pyinstaller
+          arch -x86_64 pyinstaller --name=converter --onefile --specpath . wrapper.py
 
-      - name: Build binary using wrapper.spec
+      - name: Build binary using PyInstaller
         run: |
           source venv/bin/activate
           mkdir -p release
@@ -47,7 +46,7 @@ jobs:
           echo "Contents of venv/bin:"
           ls -l venv/bin
 
-          # Run PyInstaller with wrapper.spec
+          # Run PyInstaller with the generated wrapper.spec
           arch -x86_64 pyinstaller wrapper.spec
 
           # Debug the dist directory
@@ -62,6 +61,7 @@ jobs:
         with:
           name: mumma_converter-macOS
           path: release/mumma_converter-macOS.tar.gz
+
 
   release:
     needs: build
