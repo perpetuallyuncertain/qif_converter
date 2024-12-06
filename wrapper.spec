@@ -24,7 +24,7 @@ a = Analysis(
         'streamlit'  # Ensure Streamlit is included as a hidden import
     ],
     hookspath=[],
-    hooksconfig={}
+    hooksconfig={},
     runtime_hooks=[],
     excludes=[],
     noarchive=False,
