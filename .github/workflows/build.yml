@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-12  # Use a specific macOS version supported by GitHub Actions
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,32 +30,21 @@ jobs:
         run: |
           python3 -m venv venv
           source venv/bin/activate
-          pip install --no-cache-dir -r requirements.txt      
+          pip install --no-cache-dir -r requirements.txt
 
-      - name: Build binary for Intel (x86_64)
+      - name: Build binary using wrapper.spec
         run: |
           mkdir -p release
-          
-          # Detect the platform-specific streamlit binary path
-          if [[ "$(uname -s)" == "Darwin" ]]; then
-            STREAMLIT_PATH="venv/bin/streamlit"
-          else
-            STREAMLIT_PATH="venv/Scripts/streamlit.exe"
-          fi
 
-          # Debug the paths
-          echo "Streamlit binary path: $STREAMLIT_PATH"
+          # Debugging the environment
           echo "Contents of venv/bin:"
           ls -l venv/bin
 
-          # Build the binary
-          arch -x86_64 pyinstaller --onefile --name csv_to_qif \
-            --add-data "main.py:." \
-            --add-binary="$STREAMLIT_PATH:streamlit" \
-            wrapper.py
+          # Run PyInstaller with wrapper.spec
+          arch -x86_64 pyinstaller wrapper.spec
 
-          # Package the output
-          tar -czvf release/csv_to_qif-macOS.tar.gz -C dist csv_to_qif
+          # Package the binary into a tar.gz file
+          tar -czvf release/csv_to_qif-macOS.tar.gz -C dist wrapper
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
