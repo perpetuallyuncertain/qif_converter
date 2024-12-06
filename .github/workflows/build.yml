@@ -4,7 +4,7 @@ on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -28,7 +28,7 @@ jobs:
 
       - name: Recreate Virtual Environment (x86_64)
         run: |
-          rm -rf venv  # Clean any existing virtual environment
+          rm -rf venv
           arch -x86_64 /Library/Frameworks/Python.framework/Versions/3.9/bin/python3 -m venv venv
           source venv/bin/activate
           arch -x86_64 pip install --no-cache-dir --force-reinstall -r requirements.txt
@@ -46,19 +46,11 @@ jobs:
       - name: Regenerate Spec File
         run: |
           source venv/bin/activate
-          arch -x86_64 pyinstaller --name=mumma_converter --onefile --specpath . wrapper.py
+          arch -x86_64 pyinstaller --name=mumma_converter --onefile --specpath . --add-data "main.py:." wrapper.py
 
       - name: Debug Spec File
         run: |
           ls -l mumma_converter.spec || echo "mumma_converter.spec not found"
-
-      - name: Modify Spec File (If Exists)
-        run: |
-          if [ -f mumma_converter.spec ]; then
-            sed -i '' 's|binaries=\[\]|binaries=\[\("/Library/Frameworks/Python.framework/Versions/3.9", "python.framework/Versions/3.9"\)\]|' mumma_converter.spec
-          else
-            echo "No mumma_converter.spec file found, skipping modification."
-          fi
 
       - name: Build Binary Using PyInstaller
         run: |
@@ -70,8 +62,6 @@ jobs:
         run: |
           echo "Contents of dist directory:"
           ls -l dist
-          echo "Contents of python.framework:"
-          ls -l dist/mumma_converter/python.framework || echo "python.framework not found"
 
       - name: Package the Binary
         run: |
