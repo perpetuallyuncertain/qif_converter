@@ -13,10 +13,7 @@ else:
 a = Analysis(
     ['wrapper.py'],  # Main script to analyze
     pathex=[],  # Additional paths to include in the search
-    binaries=[
-        streamlit_binary,  # Dynamically set Streamlit binary path
-        ("/Library/Frameworks/Python.framework/Versions/3.9", "python.framework/Versions/3.9")  # Full Python framework
-    ],
+    binaries=[streamlit_binary],
     datas=[
         ('main.py', '.')  # Include main.py in the root of the bundle
     ],

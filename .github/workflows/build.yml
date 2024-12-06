@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Use Preinstalled Python
         run: |
           arch -x86_64 /usr/bin/python3 --version
@@ -27,12 +27,18 @@ jobs:
           source venv/bin/activate
           pip install --no-cache-dir -r requirements.txt
 
-      - name: Install PyInstaller
+      - name: Reinstall numpy cleanly
         run: |
           source venv/bin/activate
-          pip install pyinstaller numpy
+          pip uninstall -y numpy
+          pip install numpy
 
-      - name: Generate wrapper.spec
+      - name: Debug installed dependencies
+        run: |
+          source venv/bin/activate
+          pip freeze
+
+      - name: Regenerate wrapper.spec
         run: |
           source venv/bin/activate
           arch -x86_64 pyinstaller --name=converter --onefile --specpath . wrapper.py
@@ -46,7 +52,7 @@ jobs:
           echo "Contents of venv/bin:"
           ls -l venv/bin
 
-          # Run PyInstaller with the generated wrapper.spec
+          # Run PyInstaller with the regenerated wrapper.spec
           arch -x86_64 pyinstaller wrapper.spec
 
           # Debug the dist directory
@@ -61,7 +67,6 @@ jobs:
         with:
           name: mumma_converter-macOS
           path: release/mumma_converter-macOS.tar.gz
-
 
   release:
     needs: build
