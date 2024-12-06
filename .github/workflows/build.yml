@@ -28,7 +28,7 @@ jobs:
       - name: Build binary
         run: |
           mkdir -p release
-          pyinstaller --onefile --name csv_to_qif main.py
+          pyinstaller --onefile --name csv_to_qif --target-arch=x86_64 main.py
           tar -czvf release/csv_to_qif-macOS.tar.gz -C dist csv_to_qif
 
       - name: Upload artifact
