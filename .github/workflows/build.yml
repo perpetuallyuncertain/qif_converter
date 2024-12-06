@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: macos-12  # Use a specific macOS version supported by GitHub Actions
+    runs-on: macos-14  # Use a specific macOS version supported by GitHub Actions
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
