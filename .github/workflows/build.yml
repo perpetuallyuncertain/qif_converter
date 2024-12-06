@@ -1,48 +1,61 @@
-name: Build macOS Binary
-
+name: Build and Release
 on:
   push:
     tags:
-      - 'v*'  # Trigger on version tags
-  workflow_dispatch:  # Allow manual trigger
+      - 'v*'
 
 permissions:
   contents: write
   packages: write
 
+env:
+  PYTHON_VERSION: '3.9'
+  PACKAGE_NAME: 'csv_to_qif'
+
 jobs:
   build:
+    name: Build macOS Binary
     runs-on: macos-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Set up Python
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install dependencies
-        run: pip install pyinstaller
-
-      - name: Build binary
+      - name: Install Dependencies
         run: |
-          pyinstaller --onefile --name csv_to_qif main.py
-          mkdir -p release
-          tar -czvf release/csv_to_qif-macOS.tar.gz -C dist csv_to_qif
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Upload artifact
+      - name: Build Executable
+        run: |
+          mkdir -p release
+          pyinstaller --onefile --name ${{ env.PACKAGE_NAME }} main.py
+          mv dist/${{ env.PACKAGE_NAME }} release/${{ env.PACKAGE_NAME }}-macOS
+
+      - name: Archive Binary
+        run: |
+          cd release
+          tar -czf ${PACKAGE_NAME}-macOS.tar.gz ${PACKAGE_NAME}-macOS
+
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: csv_to_qif-macOS
-          path: release/csv_to_qif-macOS.tar.gz
+          name: ${{ env.PACKAGE_NAME }}-macOS
+          path: release/${{ env.PACKAGE_NAME }}-macOS.tar.gz
 
   release:
+    name: Create GitHub Release
     needs: build
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
       - name: Create Release
         uses: actions/create-release@v1
@@ -59,4 +72,4 @@ jobs:
         with:
           repo_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           tag: ${{ github.ref_name }}
-          file: release/csv_to_qif-macOS.tar.gz
+          file: release/${{ env.PACKAGE_NAME }}-macOS.tar.gz
