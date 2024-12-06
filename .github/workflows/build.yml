@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,14 +22,14 @@ jobs:
         with:
           python-version: 3.9
 
-      - name: Install dependencies
+      - name: Install dependencies (x86_64)
         run: |
           arch -x86_64 python3 -m pip install --no-cache-dir -r requirements.txt
 
-      - name: Build binary
+      - name: Build binary for Intel (x86_64)
         run: |
           mkdir -p release
-          pyinstaller --onefile --name csv_to_qif main.py
+          arch -x86_64 pyinstaller --onefile --name csv_to_qif main.py
           tar -czvf release/csv_to_qif-macOS.tar.gz -C dist csv_to_qif
 
       - name: Upload artifact
