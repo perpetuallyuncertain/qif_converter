@@ -27,8 +27,20 @@ jobs:
           source venv/bin/activate
           pip install --no-cache-dir -r requirements.txt
 
+      - name: Install PyInstaller
+        run: |
+          source venv/bin/activate
+          pip install pyinstaller
+
+      - name: Debug PATH
+        run: |
+          echo "Current PATH: $PATH"
+          source venv/bin/activate
+          which pyinstaller
+
       - name: Build binary using wrapper.spec
         run: |
+          source venv/bin/activate
           mkdir -p release
 
           # Debugging the environment
@@ -37,6 +49,10 @@ jobs:
 
           # Run PyInstaller with wrapper.spec
           arch -x86_64 pyinstaller wrapper.spec
+
+          # Debug the dist directory
+          echo "Contents of dist directory:"
+          ls -l dist
 
           # Package the binary into a tar.gz file
           tar -czvf release/mumma_converter-macOS.tar.gz -C dist mumma_converter    
