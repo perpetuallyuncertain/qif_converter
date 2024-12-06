@@ -13,11 +13,18 @@ else:
 a = Analysis(
     ['wrapper.py'],
     pathex=[],
-    binaries=[streamlit_binary],  # Use dynamically set streamlit binary
-    datas=[('main.py', '.')],  # Include main.py
-    hiddenimports=['streamlit'],  # Ensure streamlit is included as a hidden import
+    binaries=[
+    streamlit_binary,  # Dynamically set Streamlit binary path
+    ("/Library/Frameworks/Python.framework/Versions/3.9", "python.framework/Versions/3.9")  # Full Python framework
+    ],
+    datas=[
+        ('main.py', '.')  # Include main.py
+    ],
+    hiddenimports=[
+        'streamlit'  # Ensure Streamlit is included as a hidden import
+    ],
     hookspath=[],
-    hooksconfig={},
+    hooksconfig={}
     runtime_hooks=[],
     excludes=[],
     noarchive=False,
