@@ -49,29 +49,29 @@ jobs:
           echo "Contents of dist directory:"
           ls -l dist
           echo "Contents of the .app bundle:"
-          ls -l dist/Mumma\ Converter.app
+          ls -l dist/Mumma_Converter.app
 
       - name: Create Release Directory
         run: mkdir -p release
         
       - name: Create DMG Installer
         run: |
-            brew install create-dmg
-            create-dmg \
-              --volname "Mumma Converter Installer" \
-              --window-size 500 300 \
-              --icon-size 100 \
-              --app-drop-link 300 150 \
-              dist/Mumma\ Converter.app \
-              release/Mumma\ Converter\ Installer.dmg
+          brew install create-dmg
+          create-dmg \
+            --volname "Mumma_Converter_Installer" \
+            --window-size 500 300 \
+            --icon-size 100 \
+            --app-drop-link 300 150 \
+            "dist/Mumma_Converter.app" \
+            "release/Mumma_Converter_Installer.dmg"
         
       
 
       - name: Upload DMG Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mumma_converter-macOS.dmg
-          path: Mumma\ Converter\ Installer.dmg
+          name: Mumma_Converter_Installer.dmg
+          path: release/Mumma_Converter_Installer.dmg
 
 
   release:
@@ -84,7 +84,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: mumma_converter-macOS.dmg
+          name: Mumma_Converter_Installer.dmg
 
       - name: Create Release
         uses: actions/create-release@v1
@@ -101,4 +101,4 @@ jobs:
         with:
           repo_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           tag: ${{ github.ref_name }}
-          file: Mumma\ Converter\ Installer.dmg
+          file: Mumma_Converter_Installer.dmg
