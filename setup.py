@@ -17,7 +17,7 @@ OPTIONS = {
             '/System/Library/Frameworks',     # Fallback to system frameworks
         ],
     },
-    'includes': [],  # Explicitly include additional Python modules, if any
+    'frameworks': ['/Library/Frameworks/Python.framework'],  # Explicitly include Python framework
 }
 
 # Configure the py2app setup
