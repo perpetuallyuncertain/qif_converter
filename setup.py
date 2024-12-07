@@ -10,7 +10,14 @@ OPTIONS = {
         'CFBundleName': 'Mumma_Converter',
         'CFBundleVersion': '1.0',
         'CFBundleIdentifier': 'com.example.mumma_converter',
+        'PyRuntimeLocations': [
+            '@executable_path/../Frameworks',  # Preferred location within the app bundle
+            '/usr/local/Frameworks',          # Fallback to globally installed Python frameworks
+            '/Library/Frameworks',
+            '/System/Library/Frameworks',     # Fallback to system frameworks
+        ],
     },
+    'includes': [],  # Explicitly include additional Python modules, if any
 }
 
 # Configure the py2app setup
