@@ -7,9 +7,9 @@ OPTIONS = {
     'argv_emulation': True,  # Ensure command-line arguments are handled correctly
     'packages': ['streamlit', 'pandas'],  # Include dependencies
     'plist': {  # macOS-specific metadata
-        'CFBundleName': 'Mumma Converter',
+        'CFBundleName': 'Mumma_Converter',
         'CFBundleVersion': '1.0',
-        'CFBundleIdentifier': 'com.example.mumma-converter',
+        'CFBundleIdentifier': 'com.example.mumma_converter',
     },
 }
 
