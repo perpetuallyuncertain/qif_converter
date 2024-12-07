@@ -60,7 +60,7 @@ jobs:
         
       - name: Create Release Directory
         run: mkdir -p release
-        
+
       - name: Create DMG Installer
         run: |
           brew install create-dmg
@@ -100,11 +100,11 @@ jobs:
           echo "DMG created successfully at: $OUTPUT_DIR/$OUTPUT_FILENAME"
 
             
-            - name: Upload DMG Artifact
-              uses: actions/upload-artifact@v4
-              with:
-                name: Mumma_Converter_Installer.dmg
-                path: release/Mumma_Converter_Installer.dmg
+      - name: Upload DMG Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mumma_Converter_Installer.dmg
+          path: release/Mumma_Converter_Installer.dmg
 
   release:
     needs: build
