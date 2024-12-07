@@ -56,7 +56,7 @@ jobs:
         run: |
           source venv/bin/activate
           STREAMLIT_PATH=$(find venv/bin -name streamlit)
-          pyinstaller --name=mumma_converter --onefile \
+          arch -x86_64 pyinstaller --target-arch=x86_64 --name=mumma_converter --onefile \
             --add-data "main.py:." \
             --add-binary "$STREAMLIT_PATH:streamlit" \
             --hidden-import streamlit \
