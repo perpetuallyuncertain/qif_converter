@@ -69,26 +69,42 @@ jobs:
           APP_PATH="$(pwd)/dist/Mumma_Converter.app"
           OUTPUT_DIR="$(pwd)/release"
           OUTPUT_FILENAME="Mumma_Converter_Installer.dmg"
-          
+      
           echo "Using APP_PATH=$APP_PATH"
           echo "Using OUTPUT_DIR=$OUTPUT_DIR"
           echo "Using OUTPUT_FILENAME=$OUTPUT_FILENAME"
       
-          # Verify paths
-          ls -l "$APP_PATH" || echo "App path not found!"
-          mkdir -p "$OUTPUT_DIR"  # Ensure release directory exists
+          # Ensure the output directory exists
+          mkdir -p "$OUTPUT_DIR"
       
-          # Run create-dmg
+          # Validate APP_PATH exists
+          if [ ! -d "$APP_PATH" ]; then
+            echo "App path not found: $APP_PATH"
+            exit 1
+          fi
+      
+          # Force filename extension
+          OUTPUT_FILENAME="${OUTPUT_FILENAME%.dmg}.dmg"
+          FULL_OUTPUT_PATH="$OUTPUT_DIR/$OUTPUT_FILENAME"
+          echo "Full output path: $FULL_OUTPUT_PATH"
+      
+          # Create DMG
           create-dmg \
             --volname "Mumma Converter" \
             --window-size 500 300 \
             --icon-size 100 \
             --app-drop-link 300 150 \
             "$APP_PATH" \
-            "$OUTPUT_DIR/$OUTPUT_FILENAME"
+            "$FULL_OUTPUT_PATH"
       
           # Verify DMG creation
-          ls -l "$OUTPUT_DIR" || echo "DMG not created!"
+          if [ ! -f "$FULL_OUTPUT_PATH" ]; then
+            echo "DMG creation failed!"
+            exit 1
+          fi
+      
+          echo "DMG created successfully at: $FULL_OUTPUT_PATH"
+      
       
       
       - name: Upload DMG Artifact
