@@ -42,7 +42,7 @@ jobs:
       - name: Build macOS Application with py2app
         run: |
           source venv/bin/activate
-          python setup.py py2app || echo "py2app failed!"
+          python setup.py py2app -q || echo "py2app failed!"
         
       - name: Debug Dist Directory
         run: |
@@ -50,6 +50,14 @@ jobs:
           ls -l dist || echo "dist directory not found"
           echo "Contents of the .app bundle (if created):"
           ls -l dist/Mumma_Converter.app || echo "Mumma_Converter.app not found"
+
+      - name: Verify `.app` Structure
+        run: |
+          echo "Checking .app structure:"
+          ls -l "dist/Mumma_Converter.app/Contents"
+          ls -l "dist/Mumma_Converter.app/Contents/MacOS"
+          ls -l "dist/Mumma_Converter.app/Contents/Resources"
+        
       
       - name: Create Release Directory
         run: mkdir -p release
@@ -58,12 +66,13 @@ jobs:
         run: |
           brew install create-dmg
           create-dmg \
-            --volname "Mumma_Converter_Installer" \
+            --volname "Mumma Converter Installer" \
             --window-size 500 300 \
             --icon-size 100 \
             --app-drop-link 300 150 \
             "dist/Mumma_Converter.app" \
-            "release/Mumma_Converter_Installer.dmg"   
+            "release/Mumma_Converter_Installer.dmg"
+       
 
       - name: Upload DMG Artifact
         uses: actions/upload-artifact@v4
