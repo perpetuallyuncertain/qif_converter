@@ -42,8 +42,15 @@ jobs:
       - name: Build macOS Application with py2app
         run: |
           source venv/bin/activate
-          python setup.py py2app > /dev/null   
-
+          python setup.py py2app || echo "py2app failed!"
+        
+      - name: Debug Dist Directory
+        run: |
+          echo "Contents of dist directory:"
+          ls -l dist || echo "dist directory not found"
+          echo "Contents of the .app bundle (if created):"
+          ls -l dist/Mumma_Converter.app || echo "Mumma_Converter.app not found"
+      
       - name: Create Release Directory
         run: mkdir -p release
         
