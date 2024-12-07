@@ -32,7 +32,13 @@ jobs:
           rm -rf venv
           /Library/Frameworks/Python.framework/Versions/3.9/bin/python3 -m venv venv
           source venv/bin/activate
-          pip install --no-cache-dir py2app streamlit pandas
+          pip install --upgrade pip  # Upgrade pip
+          pip install --no-cache-dir -r requirements.txt  # Install from requirements.txt
+
+      - name: Install Build Dependencies
+        run: |
+          source venv/bin/activate
+          pip install py2app  # Install py2app separately
 
       - name: Debug Installed Dependencies
         run: |
@@ -99,7 +105,6 @@ jobs:
 
           echo "DMG created successfully at: $OUTPUT_DIR/$OUTPUT_FILENAME"
 
-            
       - name: Upload DMG Artifact
         uses: actions/upload-artifact@v4
         with:
