@@ -1,16 +1,29 @@
-import subprocess
 import os
+import subprocess
+import sys
 
-if __name__ == "__main__":
-      # Determine the base directory of the executable
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+# Locate the PyInstaller temporary folder
+current_dir = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
 
-    # Path to main.py
-    main_path = os.path.join(base_dir, "main.py")
-    print(f"Looking for main.py at: {main_path}")
+# Build the path to streamlit in the extracted folder
+streamlit_path = os.path.join(current_dir, 'streamlit')
 
-    # Call Streamlit to run the application
-    if os.path.exists(main_path):
-        subprocess.run(["streamlit", "run", main_path])
-    else:
-        print(f"Error: main.py not found at {main_path}")
+# Ensure streamlit exists in the bundled files
+if not os.path.exists(streamlit_path):
+    print(f"Error: Streamlit not found at: {streamlit_path}")
+    sys.exit(1)
+
+# Path to main.py
+main_py_path = os.path.join(current_dir, 'main.py')
+
+# Ensure main.py exists
+if not os.path.exists(main_py_path):
+    print(f"Error: main.py not found at: {main_py_path}")
+    sys.exit(1)
+
+# Execute Streamlit
+try:
+    subprocess.run([streamlit_path, "run", main_py_path])
+except Exception as e:
+    print(f"Error running Streamlit: {e}")
+    sys.exit(1)
