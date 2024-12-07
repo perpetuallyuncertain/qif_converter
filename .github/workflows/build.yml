@@ -51,7 +51,11 @@ jobs:
       - name: Debug Spec File
         run: |
           ls -l mumma_converter.spec || echo "mumma_converter.spec not found"
-
+          
+      - name: Ensure Streamlit is Executable
+        run: |
+          chmod +x venv/bin/streamlit
+        
       - name: Build Binary with PyInstaller
         run: |
           source venv/bin/activate
