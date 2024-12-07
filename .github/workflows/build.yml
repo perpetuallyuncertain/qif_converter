@@ -70,6 +70,7 @@ jobs:
 
       - name: Package the Binary
         run: |
+          mkdir -p release  
           tar -czvf release/mumma_converter-macOS.tar.gz -C dist mumma_converter
 
       - name: Upload Artifact
