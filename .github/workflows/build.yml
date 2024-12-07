@@ -66,19 +66,21 @@ jobs:
         run: |
           brew install create-dmg
           APP_PATH="$(pwd)/dist/Mumma_Converter.app"
-          OUTPUT_PATH="$(pwd)/release/Mumma_Converter_Installer.dmg"
-          
+          OUTPUT_DIR="$(pwd)/release"
+          OUTPUT_FILENAME="Mumma_Converter_Installer.dmg"
+      
           echo "Using APP_PATH=$APP_PATH"
-          echo "Using OUTPUT_PATH=$OUTPUT_PATH"
-          
+          echo "Using OUTPUT_DIR=$OUTPUT_DIR"
+          echo "Using OUTPUT_FILENAME=$OUTPUT_FILENAME"
+      
           create-dmg \
             --volname "Mumma Converter" \
             --window-size 500 300 \
             --icon-size 100 \
             --app-drop-link 300 150 \
             "$APP_PATH" \
-            "$OUTPUT_PATH"
-
+            "$OUTPUT_DIR/$OUTPUT_FILENAME"
+      
       - name: Upload DMG Artifact
         uses: actions/upload-artifact@v4
         with:
