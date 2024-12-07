@@ -64,7 +64,7 @@ jobs:
       - name: Create DMG Installer
         run: |
           brew install create-dmg
-          
+      
           APP_PATH="$(pwd)/dist/Mumma_Converter.app"
           OUTPUT_DIR="$(pwd)/release"
           OUTPUT_FILENAME="Mumma_Converter_Installer.dmg"
@@ -91,13 +91,14 @@ jobs:
             "$APP_PATH" \
             "$OUTPUT_DIR"
       
-          # Rename the generated DMG file
-          GENERATED_DMG="$(find "$OUTPUT_DIR" -name '*.dmg' -print -quit)"
+          # Locate the generated DMG file
+          GENERATED_DMG=$(find "$OUTPUT_DIR" -name '*.dmg' -print -quit)
           if [ -z "$GENERATED_DMG" ]; then
-            echo "DMG creation failed!"
+            echo "DMG creation failed! No DMG file found in $OUTPUT_DIR."
             exit 1
           fi
       
+          # Rename the DMG file to the desired filename
           mv "$GENERATED_DMG" "$OUTPUT_DIR/$OUTPUT_FILENAME"
           echo "DMG created successfully at: $OUTPUT_DIR/$OUTPUT_FILENAME"
       
