@@ -1,4 +1,4 @@
-name: Build macOS Binary
+name: Build macOS Installer
 
 on:
   push:
@@ -22,66 +22,50 @@ jobs:
           curl -o python.pkg https://www.python.org/ftp/python/3.9.6/python-3.9.6-macos11.pkg
           sudo installer -pkg python.pkg -target /
 
-      - name: Debug Python Framework
+      - name: Debug Python Installation
         run: |
-          ls -l /Library/Frameworks/Python.framework/Versions/3.9 || echo "Python framework not found"
+          file /Library/Frameworks/Python.framework/Versions/3.9/bin/python3
+          /Library/Frameworks/Python.framework/Versions/3.9/bin/python3 --version
 
-      - name: Recreate Virtual Environment (x86_64)
+      - name: Create Virtual Environment with Universal Python
         run: |
           rm -rf venv
-          arch -x86_64 /Library/Frameworks/Python.framework/Versions/3.9/bin/python3 -m venv venv
+          /Library/Frameworks/Python.framework/Versions/3.9/bin/python3 -m venv venv
           source venv/bin/activate
-          arch -x86_64 pip install --no-cache-dir --force-reinstall -r requirements.txt
-
-      - name: Install PyInstaller and Streamlit
-        run: |
-          source venv/bin/activate
-          arch -x86_64 pip install pyinstaller streamlit
+          pip install --no-cache-dir py2app streamlit pandas
 
       - name: Debug Installed Dependencies
         run: |
           source venv/bin/activate
           pip freeze
 
-      - name: Regenerate Spec File
+      - name: Build macOS Application with py2app
         run: |
           source venv/bin/activate
-          arch -x86_64 pyinstaller --name=mumma_converter --onefile --specpath . --add-data "main.py:." wrapper.py
+          python setup.py py2app
 
-      - name: Debug Spec File
-        run: |
-          ls -l mumma_converter.spec || echo "mumma_converter.spec not found"
-          
-      - name: Ensure Streamlit is Executable
-        run: |
-          chmod +x venv/bin/streamlit
-        
-      - name: Build Binary with PyInstaller
-        run: |
-          source venv/bin/activate
-          STREAMLIT_PATH=$(find venv/bin -name streamlit)
-          arch -x86_64 pyinstaller --target-arch=x86_64 --name=mumma_converter --onefile \
-            --add-data "main.py:." \
-            --add-binary "$STREAMLIT_PATH:streamlit" \
-            --hidden-import streamlit \
-            --hidden-import streamlit.runtime.scriptrunner \
-            wrapper.py
-
-      - name: Debug dist Directory
+      - name: Debug Dist Directory
         run: |
           echo "Contents of dist directory:"
           ls -l dist
+          echo "Contents of the .app bundle:"
+          ls -l dist/Mumma\ Converter.app
 
-      - name: Package the Binary
+      - name: Create DMG Installer
         run: |
-          mkdir -p release  
-          tar -czvf release/mumma_converter-macOS.tar.gz -C dist mumma_converter
+          brew install create-dmg
+          create-dmg \
+            --volname "Mumma Converter Installer" \
+            --window-size 500 300 \
+            --icon-size 100 \
+            --app-drop-link 300 150 \
+            dist/Mumma\ Converter.app
 
-      - name: Upload Artifact
+      - name: Upload DMG Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mumma_converter-macOS
-          path: release/mumma_converter-macOS.tar.gz
+          name: mumma_converter-macOS.dmg
+          path: Mumma\ Converter\ Installer.dmg
 
 
   release:
@@ -94,7 +78,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: mumma_converter-macOS
+          name: mumma_converter-macOS.dmg
 
       - name: Create Release
         uses: actions/create-release@v1
@@ -111,4 +95,4 @@ jobs:
         with:
           repo_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           tag: ${{ github.ref_name }}
-          file: mumma_converter-macOS.tar.gz
+          file: Mumma\ Converter\ Installer.dmg
