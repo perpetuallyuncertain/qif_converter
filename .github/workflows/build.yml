@@ -58,7 +58,6 @@ jobs:
           ls -l "dist/Mumma_Converter.app/Contents/MacOS"
           ls -l "dist/Mumma_Converter.app/Contents/Resources"
         
-      
       - name: Create Release Directory
         run: mkdir -p release
         
@@ -83,36 +82,30 @@ jobs:
             exit 1
           fi
       
-          # Force filename extension
-          OUTPUT_FILENAME="${OUTPUT_FILENAME%.dmg}.dmg"
-          FULL_OUTPUT_PATH="$OUTPUT_DIR/$OUTPUT_FILENAME"
-          echo "Full output path: $FULL_OUTPUT_PATH"
-      
-          # Create DMG
+          # Create DMG (output to directory only)
           create-dmg \
             --volname "Mumma Converter" \
             --window-size 500 300 \
             --icon-size 100 \
             --app-drop-link 300 150 \
             "$APP_PATH" \
-            "$FULL_OUTPUT_PATH"
+            "$OUTPUT_DIR"
       
-          # Verify DMG creation
-          if [ ! -f "$FULL_OUTPUT_PATH" ]; then
+          # Rename the generated DMG file
+          GENERATED_DMG="$(find "$OUTPUT_DIR" -name '*.dmg' -print -quit)"
+          if [ -z "$GENERATED_DMG" ]; then
             echo "DMG creation failed!"
             exit 1
           fi
       
-          echo "DMG created successfully at: $FULL_OUTPUT_PATH"
-      
-      
+          mv "$GENERATED_DMG" "$OUTPUT_DIR/$OUTPUT_FILENAME"
+          echo "DMG created successfully at: $OUTPUT_DIR/$OUTPUT_FILENAME"
       
       - name: Upload DMG Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Mumma_Converter_Installer.dmg
           path: release/Mumma_Converter_Installer.dmg
-
 
   release:
     needs: build
@@ -134,11 +127,11 @@ jobs:
           draft: false
           prerelease: false
         env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Release Asset
         uses: svenstaro/upload-release-action@v2
         with:
-          repo_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
           file: Mumma_Converter_Installer.dmg
