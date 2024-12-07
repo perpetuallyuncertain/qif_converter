@@ -52,11 +52,16 @@ jobs:
         run: |
           ls -l mumma_converter.spec || echo "mumma_converter.spec not found"
 
-      - name: Build Binary Using PyInstaller
+      - name: Build Binary with PyInstaller
         run: |
           source venv/bin/activate
-          mkdir -p release
-          arch -x86_64 pyinstaller mumma_converter.spec
+          STREAMLIT_PATH=$(find venv/bin -name streamlit)
+          pyinstaller --name=mumma_converter --onefile \
+            --add-data "main.py:." \
+            --add-binary "$STREAMLIT_PATH:streamlit" \
+            --hidden-import streamlit \
+            --hidden-import streamlit.runtime.scriptrunner \
+            wrapper.py
 
       - name: Debug dist Directory
         run: |
