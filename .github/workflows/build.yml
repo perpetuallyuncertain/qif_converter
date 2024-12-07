@@ -42,14 +42,7 @@ jobs:
       - name: Build macOS Application with py2app
         run: |
           source venv/bin/activate
-          python setup.py py2app
-
-      - name: Debug Dist Directory
-        run: |
-          echo "Contents of dist directory:"
-          ls -l dist
-          echo "Contents of the .app bundle:"
-          ls -l dist/Mumma_Converter.app
+          python setup.py py2app > /dev/null   
 
       - name: Create Release Directory
         run: mkdir -p release
@@ -63,9 +56,7 @@ jobs:
             --icon-size 100 \
             --app-drop-link 300 150 \
             "dist/Mumma_Converter.app" \
-            "release/Mumma_Converter_Installer.dmg"
-        
-      
+            "release/Mumma_Converter_Installer.dmg"   
 
       - name: Upload DMG Artifact
         uses: actions/upload-artifact@v4
