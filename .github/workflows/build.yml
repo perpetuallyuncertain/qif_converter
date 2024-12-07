@@ -51,16 +51,20 @@ jobs:
           echo "Contents of the .app bundle:"
           ls -l dist/Mumma\ Converter.app
 
+      - name: Create Release Directory
+        run: mkdir -p release
+        
       - name: Create DMG Installer
         run: |
-          brew install create-dmg
-          create-dmg \
-            --volname "Mumma Converter Installer" \
-            --window-size 500 300 \
-            --icon-size 100 \
-            --app-drop-link 300 150 \
-            dist/Mumma\ Converter.app \
-            Mumma\ Converter\ Installer.dmg
+            brew install create-dmg
+            create-dmg \
+              --volname "Mumma Converter Installer" \
+              --window-size 500 300 \
+              --icon-size 100 \
+              --app-drop-link 300 150 \
+              dist/Mumma\ Converter.app \
+              release/Mumma\ Converter\ Installer.dmg
+        
       
 
       - name: Upload DMG Artifact
