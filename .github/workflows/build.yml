@@ -101,7 +101,7 @@ jobs:
             --volname "Mumma Converter" \
             --window-size 500 300 \
             --icon-size 100 \
-            --app-drop-link 300 150 \
+            --app-drop-link 300 250 \
             "$OUTPUT_DIR/$OUTPUT_FILENAME" \
             "$APP_PATH"
 
@@ -112,17 +112,6 @@ jobs:
           fi
 
           echo "DMG created successfully at: $OUTPUT_DIR/$OUTPUT_FILENAME"
-
-      - name: Notarize the DMG
-        env:
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
-        run: |
-          xcrun altool --notarize-app -f release/Mumma_Converter_Installer.dmg \
-            --primary-bundle-id "com.example.mummaconverter" \
-            --username "$APPLE_ID" \
-            --password "$APPLE_PASSWORD"
-
 
       - name: Test Packaged App
         run: |
