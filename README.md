@@ -19,11 +19,11 @@ This program helps you easily convert `.csv` files into `.qif` files for financi
 ### Step 2: Get the App
 
 1. **Go to the App Repository**:
-   - Visit the [Releases](https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME/releases) page of the GitHub repository.
+   - Visit the [Releases](https://github.com/perpetuallyuncertain/qif_converter/pkgs/container/mumma_converter) page of the GitHub repository.
 2. **Copy the App Command**:
    - In the latest release, find the container URL under **Usage**. It will look like this:
      ```
-     docker run -p 8501:8501 ghcr.io/YOUR_GITHUB_USERNAME/mumma_converter:latest
+     docker run -p 8501:8501 ghcr.io/prepetuallyuncertain/mumma_converter:latest
      ```
 
 ---
@@ -35,7 +35,7 @@ This program helps you easily convert `.csv` files into `.qif` files for financi
 2. **Run the Command**:
    - Paste the following command into the terminal and press Enter:
      ```
-     docker run -p 8501:8501 ghcr.io/YOUR_GITHUB_USERNAME/mumma_converter:latest
+     docker run -p 8501:8501 ghcr.io/prepetuallyuncertain/mumma_converter:latest
      ```
 3. **Access the App**:
    - After a few seconds, the app will start running. Open your web browser and go to:
