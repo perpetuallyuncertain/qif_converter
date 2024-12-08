@@ -17,117 +17,72 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Python from Python.org
+      - name: Install Python and Dependencies with Homebrew
         run: |
-          curl -o python.pkg https://www.python.org/ftp/python/3.9.6/python-3.9.6-macos11.pkg
-          sudo installer -pkg python.pkg -target /
+          echo "Installing Python via Homebrew..."
+          brew install python@3.9
+          echo "Python installed:"
+          python3 --version
+          which python3
 
-      - name: Debug Python Installation
+      - name: Create Virtual Environment
         run: |
-          file /Library/Frameworks/Python.framework/Versions/3.9/bin/python3
-          /Library/Frameworks/Python.framework/Versions/3.9/bin/python3 --version
-
-      - name: Create Virtual Environment with Universal Python
-        run: |
-          rm -rf venv
-          /Library/Frameworks/Python.framework/Versions/3.9/bin/python3 -m venv venv
+          echo "Creating virtual environment..."
+          python3 -m venv venv
           source venv/bin/activate
-          pip install --upgrade pip  # Upgrade pip
-          pip install --no-cache-dir -r requirements.txt  # Install from requirements.txt
+          pip install --upgrade pip
+          pip install --no-cache-dir -r requirements.txt
 
-      - name: Install Build Dependencies
+      - name: Install py2app
         run: |
+          echo "Installing py2app..."
           source venv/bin/activate
-          pip install py2app  # Install py2app separately
-
-      - name: Debug Installed Dependencies
-        run: |
-          source venv/bin/activate
-          pip freeze
+          pip install py2app
 
       - name: Build macOS Application with py2app
         run: |
+          echo "Building macOS app..."
           source venv/bin/activate
           python setup.py py2app -q || echo "py2app failed!"
 
-      - name: Verify `.app` Structure
+      - name: Verify Application Bundle Structure
         run: |
-          echo "Checking .app structure:"
-          ls -l "dist/Mumma_Converter.app/Contents"
-          ls -l "dist/Mumma_Converter.app/Contents/MacOS"
-          ls -l "dist/Mumma_Converter.app/Contents/Resources"
-        
-      - name: Create Release Directory
-        run: mkdir -p release
+          echo "Verifying .app structure..."
+          ls -l dist/Mumma_Converter.app/Contents
+          ls -l dist/Mumma_Converter.app/Contents/MacOS
+          ls -l dist/Mumma_Converter.app/Contents/Resources
 
       - name: Create DMG Installer
         run: |
+          echo "Creating DMG..."
           brew install create-dmg
-
           APP_PATH="$(pwd)/dist/Mumma_Converter.app"
           OUTPUT_DIR="$(pwd)/release"
           OUTPUT_FILENAME="Mumma_Converter_Installer.dmg"
-
-          echo "Using APP_PATH=$APP_PATH"
-          echo "Using OUTPUT_DIR=$OUTPUT_DIR"
-          echo "Using OUTPUT_FILENAME=$OUTPUT_FILENAME"
-
-          # Ensure the output directory exists
           mkdir -p "$OUTPUT_DIR"
-
-          # Validate APP_PATH exists
-          if [ ! -d "$APP_PATH" ]; then
-            echo "App path not found: $APP_PATH"
-            exit 1
-          fi
-
-          # Create DMG
           create-dmg \
             --volname "Mumma Converter" \
-            --window-size 500 300 \
-            --icon-size 100 \
+            --window-size 500 150 \
+            --icon-size 60 \
             --app-drop-link 300 250 \
             "$OUTPUT_DIR/$OUTPUT_FILENAME" \
             "$APP_PATH"
 
-          # Verify DMG creation
-          if [ ! -f "$OUTPUT_DIR/$OUTPUT_FILENAME" ]; then
-            echo "DMG creation failed! File not found: $OUTPUT_DIR/$OUTPUT_FILENAME"
-            exit 1
-          fi
-
-          echo "DMG created successfully at: $OUTPUT_DIR/$OUTPUT_FILENAME"
-
       - name: Test Packaged App
         run: |
           echo "Testing packaged app..."
-      
-          # Install coreutils for gtimeout
           brew install coreutils
-      
-          # Mount the DMG
           hdiutil attach release/Mumma_Converter_Installer.dmg
-      
-          # Change directory to the app's executable
           cd /Volumes/Mumma\ Converter/Mumma_Converter.app/Contents/MacOS
-      
-          # Define log file paths in the current working directory
           OUTPUT_LOG="$GITHUB_WORKSPACE/app_output.log"
           ERROR_LOG="$GITHUB_WORKSPACE/app_error.log"
-      
-          # Run the app with a timeout and redirect logs
-          echo "Starting the app with a timeout..."
           gtimeout 120 ./Mumma_Converter > "$OUTPUT_LOG" 2> "$ERROR_LOG" || echo "App failed or hung. See logs below."
-      
-          # Print logs
           echo "==== Application Output ===="
           cat "$OUTPUT_LOG" || echo "No standard output captured."
           echo "==== Application Errors ===="
           cat "$ERROR_LOG" || echo "No error output captured."
-      
-          # Ensure the DMG is detached
           hdiutil detach /Volumes/Mumma\ Converter || hdiutil detach -force /Volumes/Mumma\ Converter || echo "Failed to detach the DMG."
-            
+
       - name: Upload DMG Artifact
         uses: actions/upload-artifact@v4
         with:
