@@ -4,23 +4,22 @@ from setuptools import setup
 APP = ['wrapper.py']  # Entry point script
 DATA_FILES = ['main.py']  # Any additional files required by your app
 OPTIONS = {
-    'argv_emulation': True,  # Ensure command-line arguments are handled correctly
-    'packages': ['streamlit', 'pandas', 'numpy', 'altair', 'pydeck'],  # Include key dependencies
-    'includes': ['tornado', 'certifi', 'pyarrow', 'pytz'],  # Additional dependencies
-    'excludes': ['tkinter', 'test'],  # Exclude unnecessary modules
-    'plist': {  # macOS-specific metadata
+    'argv_emulation': True,
+    'packages': ['streamlit', 'pandas'],  # Include dependencies
+    'frameworks': ['/Library/Frameworks/Python.framework'],  # Include Python framework
+    'plist': {
         'CFBundleName': 'Mumma_Converter',
         'CFBundleVersion': '1.0',
         'CFBundleIdentifier': 'com.example.mumma_converter',
         'PyRuntimeLocations': [
-            '@executable_path/../Frameworks',  # Preferred location within the app bundle
-            '/usr/local/Frameworks',          # Fallback to globally installed Python frameworks
+            '@executable_path/../Frameworks',
+            '/usr/local/Frameworks',
             '/Library/Frameworks',
-            '/System/Library/Frameworks',     # Fallback to system frameworks
+            '/System/Library/Frameworks',
         ],
     },
-    'frameworks': ['/Library/Frameworks/Python.framework'],  # Explicitly include Python framework
 }
+
 
 # Configure the py2app setup
 setup(
