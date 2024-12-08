@@ -1,0 +1,54 @@
+name: Publish Docker Image
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'  # Optional: Trigger on version tags
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write  # Required for pushing to GHCR
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the code
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      # Log in to GitHub Container Registry
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build and push Docker image
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/mumma_converter:latest
+            ghcr.io/${{ github.repository_owner }}/mumma_converter:${{ github.run_number }}
+
+      # Optionally test the container
+      - name: Run container for testing
+        run: |
+          docker run -d -p 8501:8501 --name mumma_converter_test ghcr.io/${{ github.repository_owner }}/mumma_converter:latest
+          sleep 10  # Give the container time to start
+          curl -f http://localhost:8501 || (echo "App failed to start"; docker logs mumma_converter_test)
+
+      # Clean up after testing
+      - name: Stop and remove test container
+        if: always()
+        run: |
+          docker stop mumma_converter_test || true
+          docker rm mumma_converter_test || true

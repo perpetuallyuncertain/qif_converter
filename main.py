@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import os
 from io import StringIO
 
 def convert_to_qif(df, selected_columns, column_names, debit_credit_columns=None):
