@@ -115,13 +115,14 @@ jobs:
 
           echo "DMG created successfully at: $OUTPUT_DIR/$OUTPUT_FILENAME"
       - name: Test Packaged App
+        timeout-minutes: 2
         run: |
           echo "Testing packaged app..."
           hdiutil attach release/Mumma_Converter_Installer.dmg
           cd /Volumes/Mumma\ Converter/Mumma_Converter.app/Contents/MacOS
           ./Mumma_Converter || echo "Packaged app failed to start. Debugging output above."
           hdiutil detach /Volumes/Mumma\ Converter
-          
+
       - name: Upload DMG Artifact
         uses: actions/upload-artifact@v4
         with:
