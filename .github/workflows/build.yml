@@ -49,6 +49,14 @@ jobs:
         run: |
           source venv/bin/activate
           python setup.py py2app -q || echo "py2app failed!"
+      
+      - name: Copy Python.framework to App Bundle
+        run: |
+          echo "Copying Python.framework to the app bundle..."
+          mkdir -p dist/Mumma_Converter.app/Contents/Frameworks
+          cp -R /Library/Frameworks/Python.framework dist/Mumma_Converter.app/Contents/Frameworks/
+          echo "Frameworks structure after copying:"
+          ls -l dist/Mumma_Converter.app/Contents/Frameworks
         
       - name: Validate Python Framework Structure
         run: |
