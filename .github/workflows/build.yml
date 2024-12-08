@@ -17,18 +17,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Python and Dependencies with Homebrew
-        run: |
-          echo "Installing Python via Homebrew..."
-          brew install python@3.9
-          echo "Python installed:"
-          python3 --version
-          which python3
-
       - name: Create Virtual Environment with Brew-installed Python
         run: |
           rm -rf venv
-          /opt/homebrew/bin/python3.9 -m venv venv
+          python3.9 -m venv venv
           source venv/bin/activate
           pip install --upgrade pip setuptools wheel
           pip install --no-cache-dir -r requirements.txt
