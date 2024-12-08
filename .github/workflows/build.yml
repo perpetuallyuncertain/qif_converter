@@ -125,13 +125,13 @@ jobs:
           # Change directory to the app's executable
           cd /Volumes/Mumma\ Converter/Mumma_Converter.app/Contents/MacOS
           
-          # Run the app with a timeout of 120 seconds and capture logs
+          # Run the app and capture logs in memory
           echo "Starting the app..."
-          timeout 120 ./Mumma_Converter > debug.log 2>&1 || echo "App failed or hung. Debugging output follows:"
-          cat /tmp/debug.log
+          ./Mumma_Converter > >(tee /dev/stdout) 2> >(tee /dev/stderr)
           
           # Detach the DMG
           hdiutil detach /Volumes/Mumma\ Converter || echo "Failed to detach the DMG."
+        
 
 
       - name: Upload DMG Artifact
