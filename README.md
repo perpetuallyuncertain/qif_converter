@@ -1,44 +1,75 @@
 # CSV to QIF Converter
 
-This program allows you to easily convert `.csv` files to `.qif` files for financial applications. It has a simple interface for loading a `.csv` file, selecting columns, and saving the result as a `.qif` file.
+This program helps you easily convert `.csv` files into `.qif` files for financial applications. It provides a simple interface to load a `.csv` file, select the relevant columns, and save the result as a `.qif` file.
 
-## How to Install and Use
+---
 
-### Step 1: Download the App
-1. Go to the [Releases](https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME/releases) page of the GitHub repository.
-2. Click on the latest release.
-3. Under **Assets**, download the file named `csv_to_qif` (or similar).
+## How to Access and Use the App
 
-### Step 2: Run the App
-1. Once the file is downloaded, locate it in your `Downloads` folder or wherever your browser saves files.
-2. **For macOS**:
-   - Double-click the downloaded file to open the app.
-   - If you see a security warning, follow these steps:
-     1. Go to **System Preferences > Security & Privacy > General**.
-     2. Click **Open Anyway** for the app.
-3. The program will open in a window, ready for use.
+### Step 1: Install Docker
 
-### Step 3: Convert a CSV File
-1. **Open the App**: Once the app is running, you'll see a simple interface.
-2. **Load Your File**:
-   - Click **Choose a CSV File** and select your `.csv` file.
+1. **Download Docker Desktop**:
+   - Visit the [Docker website](https://www.docker.com/products/docker-desktop/) and download Docker Desktop for Mac.
+2. **Install Docker**:
+   - Follow the instructions on the website to install Docker on your Mac.
+   - Once installed, open Docker Desktop and make sure it is running. You should see the Docker icon in your menu bar.
+
+---
+
+### Step 2: Get the App
+
+1. **Go to the App Repository**:
+   - Visit the [Releases](https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME/releases) page of the GitHub repository.
+2. **Copy the App Command**:
+   - In the latest release, find the container URL under **Usage**. It will look like this:
+     ```
+     docker run -p 8501:8501 ghcr.io/YOUR_GITHUB_USERNAME/mumma_converter:latest
+     ```
+
+---
+
+### Step 3: Run the App
+
+1. **Open the Terminal**:
+   - On your Mac, open the Terminal app (you can find it by searching for "Terminal" in Spotlight or under Applications > Utilities).
+2. **Run the Command**:
+   - Paste the following command into the terminal and press Enter:
+     ```
+     docker run -p 8501:8501 ghcr.io/YOUR_GITHUB_USERNAME/mumma_converter:latest
+     ```
+3. **Access the App**:
+   - After a few seconds, the app will start running. Open your web browser and go to:
+     ```
+     http://localhost:8501
+     ```
+   - You will see the app interface.
+
+---
+
+### Step 4: Convert a CSV File
+
+1. **Load Your File**:
+   - In the app, click **Choose a CSV File** and select your `.csv` file.
    - The table contents will appear for review.
-3. **Select Columns**:
+2. **Select Columns**:
    - Choose the columns for **Date**, **Amount**, **Payee**, and (optional) **Memo**.
    - If you have separate **Debit** and **Credit** columns, check the box and specify them.
-4. **Convert to QIF**:
+3. **Convert to QIF**:
    - Click **Convert to QIF**.
-   - You'll see a button to download the `.qif` file.
+   - A button will appear to download the `.qif` file.
 
-### Step 4: Save the QIF File
-- Save the `.qif` file to your desired location.
-- You're ready to import the file into your financial software!
+---
+
+### Step 5: Save and Use the QIF File
+
+- Save the downloaded `.qif` file to your desired location.
+- Import the `.qif` file into your financial software.
 
 ---
 
 ## Notes
-- If you encounter any issues, please contact me for help!
-- Make sure the `.csv` file is formatted correctly, with clear column headers.
+
+- If you encounter any issues, contact me, and I’ll help you fix it.
+- Make sure your `.csv` file has clear column headers for smooth conversion.
 
 ---
-
