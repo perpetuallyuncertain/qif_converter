@@ -125,15 +125,19 @@ jobs:
           # Change directory to the app's executable
           cd /Volumes/Mumma\ Converter/Mumma_Converter.app/Contents/MacOS
           
-          # Run the app and capture logs in memory
-          echo "Starting the app..."
-          ./Mumma_Converter > >(tee /dev/stdout) 2> >(tee /dev/stderr)
+          # Run the app with enforced timeout and capture logs
+          echo "Starting the app with a timeout..."
+          timeout 120 ./Mumma_Converter > >(tee app_output.log) 2> >(tee app_error.log) || echo "App failed or hung. See logs below."
           
-          # Detach the DMG
+          # Print logs after execution
+          echo "==== Application Output ===="
+          cat app_output.log || echo "No standard output captured."
+          echo "==== Application Errors ===="
+          cat app_error.log || echo "No error output captured."
+          
+          # Ensure the DMG is detached
           hdiutil detach /Volumes/Mumma\ Converter || echo "Failed to detach the DMG."
-        
-
-
+      
       - name: Upload DMG Artifact
         uses: actions/upload-artifact@v4
         with:
