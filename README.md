@@ -23,7 +23,7 @@ This program helps you easily convert `.csv` files into `.qif` files for financi
 2. **Copy the App Command**:
    - In the latest release, find the container URL under **Usage**. It will look like this:
      ```
-     docker run -p 8501:8501 ghcr.io/prepetuallyuncertain/mumma_converter:latest
+     docker pull ghcr.io/perpetuallyuncertain/mumma_converter:latest
      ```
 
 ---
@@ -35,7 +35,7 @@ This program helps you easily convert `.csv` files into `.qif` files for financi
 2. **Run the Command**:
    - Paste the following command into the terminal and press Enter:
      ```
-     docker run -p 8501:8501 ghcr.io/prepetuallyuncertain/mumma_converter:latest
+     docker run -p 8501:8501 ghcr.io/perpetuallyuncertain/mumma_converter:latest
      ```
 3. **Access the App**:
    - After a few seconds, the app will start running. Open your web browser and go to:
