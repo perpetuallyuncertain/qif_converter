@@ -49,6 +49,13 @@ jobs:
         run: |
           source venv/bin/activate
           python setup.py py2app -q || echo "py2app failed!"
+
+      - name: Code-Sign the App
+        if: env.APPLE_DEV_CERT != ''
+        run: |
+          codesign --deep --force --verify --sign "$APPLE_DEV_CERT" dist/Mumma_Converter.app
+          codesign --verify --deep --verbose=4 dist/Mumma_Converter.app
+  
       
       - name: Copy Python.framework to App Bundle
         run: |
@@ -57,23 +64,6 @@ jobs:
           cp -R /Library/Frameworks/Python.framework dist/Mumma_Converter.app/Contents/Frameworks/
           echo "Frameworks structure after copying:"
           ls -l dist/Mumma_Converter.app/Contents/Frameworks
-        
-      - name: Validate Python Framework Structure
-        run: |
-          echo "Checking Python.framework structure:"
-          ls -l dist/Mumma_Converter.app/Contents/Frameworks/Python.framework
-          echo "Checking python3.9 directory:"
-          ls -l dist/Mumma_Converter.app/Contents/Frameworks/Python.framework/Versions/Current/lib/python3.9 || echo "python3.9 is incomplete!"
-  
-      - name: Fix Python Framework if Incomplete
-        run: |
-          # Check if python3.9 exists and is complete
-          if [ ! -d dist/Mumma_Converter.app/Contents/Frameworks/Python.framework/Versions/Current/lib/python3.9 ]; then
-            echo "Python.framework is incomplete. Copying the full framework..."
-            cp -R /Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9 dist/Mumma_Converter.app/Contents/Frameworks/Python.framework/Versions/Current/lib/
-          fi
-          echo "Final Python.framework structure:"
-          ls -l dist/Mumma_Converter.app/Contents/Frameworks/Python.framework/Versions/Current/lib/python3.9
 
       - name: Verify `.app` Structure
         run: |
@@ -122,6 +112,17 @@ jobs:
           fi
 
           echo "DMG created successfully at: $OUTPUT_DIR/$OUTPUT_FILENAME"
+
+      - name: Notarize the DMG
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+        run: |
+          xcrun altool --notarize-app -f release/Mumma_Converter_Installer.dmg \
+            --primary-bundle-id "com.example.mummaconverter" \
+            --username "$APPLE_ID" \
+            --password "$APPLE_PASSWORD"
+
 
       - name: Test Packaged App
         run: |
