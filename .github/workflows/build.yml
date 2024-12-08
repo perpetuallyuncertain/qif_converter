@@ -128,7 +128,7 @@ jobs:
           # Run the app with a timeout of 120 seconds and capture logs
           echo "Starting the app..."
           timeout 120 ./Mumma_Converter > debug.log 2>&1 || echo "App failed or hung. Debugging output follows:"
-          cat debug.log
+          cat /tmp/debug.log
           
           # Detach the DMG
           hdiutil detach /Volumes/Mumma\ Converter || echo "Failed to detach the DMG."
