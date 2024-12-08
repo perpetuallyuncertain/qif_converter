@@ -49,7 +49,7 @@ jobs:
       - name: Build macOS Application
         run: |
           source venv/bin/activate
-          pip install --use-pep517 py2app
+          pip install --upgrade py2app
           python setup.py py2app
         
 
