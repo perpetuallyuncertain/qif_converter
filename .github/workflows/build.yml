@@ -50,12 +50,22 @@ jobs:
           source venv/bin/activate
           python setup.py py2app -q || echo "py2app failed!"
         
-      - name: Debug Dist Directory
+      - name: Validate Python Framework Structure
         run: |
-          echo "Contents of dist directory:"
-          ls -l dist || echo "dist directory not found"
-          echo "Contents of the .app bundle (if created):"
-          ls -l dist/Mumma_Converter.app || echo "Mumma_Converter.app not found"
+          echo "Checking Python.framework structure:"
+          ls -l dist/Mumma_Converter.app/Contents/Frameworks/Python.framework
+          echo "Checking python3.9 directory:"
+          ls -l dist/Mumma_Converter.app/Contents/Frameworks/Python.framework/Versions/Current/lib/python3.9 || echo "python3.9 is incomplete!"
+  
+      - name: Fix Python Framework if Incomplete
+        run: |
+          # Check if python3.9 exists and is complete
+          if [ ! -d dist/Mumma_Converter.app/Contents/Frameworks/Python.framework/Versions/Current/lib/python3.9 ]; then
+            echo "Python.framework is incomplete. Copying the full framework..."
+            cp -R /Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9 dist/Mumma_Converter.app/Contents/Frameworks/Python.framework/Versions/Current/lib/
+          fi
+          echo "Final Python.framework structure:"
+          ls -l dist/Mumma_Converter.app/Contents/Frameworks/Python.framework/Versions/Current/lib/python3.9
 
       - name: Verify `.app` Structure
         run: |
@@ -104,7 +114,14 @@ jobs:
           fi
 
           echo "DMG created successfully at: $OUTPUT_DIR/$OUTPUT_FILENAME"
-
+      - name: Test Packaged App
+        run: |
+          echo "Testing packaged app..."
+          hdiutil attach release/Mumma_Converter_Installer.dmg
+          cd /Volumes/Mumma\ Converter/Mumma_Converter.app/Contents/MacOS
+          ./Mumma_Converter || echo "Packaged app failed to start. Debugging output above."
+          hdiutil detach /Volumes/Mumma\ Converter
+          
       - name: Upload DMG Artifact
         uses: actions/upload-artifact@v4
         with:
