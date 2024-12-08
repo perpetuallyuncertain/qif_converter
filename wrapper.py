@@ -1,21 +1,19 @@
-import sys
+#!/usr/bin/env python
+
 import os
-import subprocess
+import sys
 
-# Print debug information
-print("Starting the app...")
-print("Python executable:", sys.executable)
-print("Python version:", sys.version)
-print("Python paths:", sys.path)
+# Adjust paths to use the app's bundled Python framework
+sys.executable = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "python"
+)
+os.environ["PYTHONHOME"] = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "../Frameworks/Python.framework/Versions/Current"
+)
+os.environ["PYTHONPATH"] = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "../Resources/lib/python3.9"
+)
 
-# Set the working directory
-resources_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../Resources")
-os.chdir(resources_dir)
-print("Working directory set to:", os.getcwd())
-
-# Try running Streamlit
-try:
-    subprocess.run(["streamlit", "run", "main.py"], check=True)
-except Exception as e:
-    print("Error starting Streamlit:", e)
-    sys.exit(1)
+# Execute the main app script using Streamlit
+if __name__ == "__main__":
+    os.execv(sys.executable, [sys.executable, "-m", "streamlit", "run", "main.py"])

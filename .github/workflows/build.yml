@@ -126,16 +126,16 @@ jobs:
       - name: Test Packaged App
         run: |
           echo "Testing packaged app..."
-          
+      
           # Install coreutils for gtimeout
           brew install coreutils
       
           # Mount the DMG
           hdiutil attach release/Mumma_Converter_Installer.dmg
-          
+      
           # Change directory to the app's executable
           cd /Volumes/Mumma\ Converter/Mumma_Converter.app/Contents/MacOS
-          
+      
           # Define log file paths in the current working directory
           OUTPUT_LOG="$GITHUB_WORKSPACE/app_output.log"
           ERROR_LOG="$GITHUB_WORKSPACE/app_error.log"
@@ -143,17 +143,16 @@ jobs:
           # Run the app with a timeout and redirect logs
           echo "Starting the app with a timeout..."
           gtimeout 120 ./Mumma_Converter > "$OUTPUT_LOG" 2> "$ERROR_LOG" || echo "App failed or hung. See logs below."
-          
+      
           # Print logs
           echo "==== Application Output ===="
           cat "$OUTPUT_LOG" || echo "No standard output captured."
           echo "==== Application Errors ===="
           cat "$ERROR_LOG" || echo "No error output captured."
-          
+      
           # Ensure the DMG is detached
           hdiutil detach /Volumes/Mumma\ Converter || hdiutil detach -force /Volumes/Mumma\ Converter || echo "Failed to detach the DMG."
-        
-      
+            
       - name: Upload DMG Artifact
         uses: actions/upload-artifact@v4
         with:
